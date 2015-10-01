@@ -1,7 +1,7 @@
 {
-  "name": "redux-actions",
-  "version": "0.8.0",
-  "description": "Flux Standard Action utlities for Redux",
+  "name": "fsa-creator",
+  "version": "0.0.0",
+  "description": "Flux Standard Action creation with validation",
   "main": "lib/index.js",
   "scripts": {
     "test": "make test",
@@ -13,14 +13,14 @@
     "fsa",
     "actions"
   ],
-  "author": "Andrew Clark <acdlite@me.com>",
+  "author": "Ricardo Stuven <rstuven@gmail.com>",
   "bugs": {
-    "url": "https://github.com/acdlite/redux-actions/issues"
+    "url": "https://github.com/rstuven/fsa-creator/issues"
   },
-  "homepage": "https://github.com/acdlite/redux-actions",
+  "homepage": "https://github.com/rstuven/fsa-creator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acdlite/redux-actions.git"
+    "url": "https://github.com/rstuven/fsa-creator.git"
   },
   "license": "MIT",
   "devDependencies": {
@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "flux-standard-action": "^0.6.0",
-    "reduce-reducers": "^0.1.0"
+    "is-my-json-valid": "^2.12.2"
   }
 }

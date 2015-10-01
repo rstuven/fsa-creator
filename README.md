@@ -1,25 +1,59 @@
-redux-actions
-=============
+fsa-creator
+===========
 
-[![build status](https://img.shields.io/travis/acdlite/redux-actions/master.svg?style=flat-square)](https://travis-ci.org/acdlite/redux-actions)
-[![npm version](https://img.shields.io/npm/v/redux-actions.svg?style=flat-square)](https://www.npmjs.com/package/redux-actions)
+[![build status](https://img.shields.io/travis/rstuven/fsa-creator/master.svg?style=flat-square)](https://travis-ci.org/rstuven/fsa-creator)
+[![npm version](https://img.shields.io/npm/v/fsa-creator.svg?style=flat-square)](https://www.npmjs.com/package/fsa-creator)
 
-[Flux Standard Action](https://github.com/acdlite/flux-standard-action) utilities for Redux.
+[Flux Standard Action](https://github.com/acdlite/flux-standard-action) creation with schema validation.
 
 ```js
-npm install --save redux-actions
+npm install --save fsa-creator
 ```
 
-### `createAction(type, payloadCreator = Identity, ?metaCreator)`
+This module started as a fork of [redux-actions](https://github.com/acdlite/redux-actions) by Andrew Clark.
+It focuses in the creation of actions with handy specifications of mapping functions and schema validation.
 
-Wraps an action creator so that its return value is the payload of a Flux Standard Action. If no payload creator is passed, or if it's not a function, the identity function is used.
+### `createAction(type, ?payloadSpec, ?metaSpec)`
+
+`payloadSpec` and `metaSpec` are *mapping function specifications* for `payload`and `meta` properties, respectively.
+
+Returns an action creator function with following signature:
+
+##### `function actionCreator(?payloadInput, ?metaInput)`
+
+`payloadInput` and `metaInput` are the input of the respective mapping function.
+
+A mapping function specification can be:
+
+#### – `undefined` or `false` (omission)
+
+The property (`payload` or `meta`) will be omitted.
+
+#### – Function (mapping)
+
+A mapping function will be used.
 
 Example:
 
 ```js
-let increment = createAction('INCREMENT', amount => amount);
+let actionCreator = createAction('ACTION', arg => '(u' + arg + 'u)');
+
+expect(actionCreator('.')).to.deep.equal({
+  type: 'ACTION',
+  payload: '(u.u)'
+});
+```
+
+#### – `true` (identity mapping without validation)
+
+The identity function will be used.
+
+Example:
+
+```js
+let increment = createAction('INCREMENT', true);
 // same as
-increment = createAction('INCREMENT');
+increment = createAction('INCREMENT', amount => amount);
 
 expect(increment(42)).to.deep.equal({
   type: 'INCREMENT',
@@ -27,82 +61,67 @@ expect(increment(42)).to.deep.equal({
 });
 ```
 
-**NOTE:** The more correct name for this function is probably `createActionCreator()`, but that seems a bit redundant.
+#### – Plain object (identity mapping with validation)
 
-Use the identity form to create one-off actions:
-
-```js
-createAction('ADD_TODO')('Use Redux');
-```
-
-`metaCreator` is an optional function that creates metadata for the payload. It receives the same arguments as the payload creator, but its result becomes the meta field of the resulting action. If `metaCreator` is undefined or not a function, the meta field is omitted.
-
-### `handleAction(type, reducer | reducerMap)`
-
-Wraps a reducer so that only handles Flux Standard Actions of a certain type.
-
-If a single reducer is passed, it is used to handle both normal actions and failed actions. (A failed action is analogous to a rejected promise.) You can use this form if you know a certain type of action will never fail, like the increment example above.
-
-Otherwise, you can specify separate reducers for `next()` and `throw()`. This API is inspired by the ES6 generator interface.
-
-```js
-handleAction('FETCH_DATA', {
-  next(state, action) {...}
-  throw(state, action) {...}
-});
-```
-
-### `handleActions(reducerMap, ?defaultState)`
-
-Creates multiple reducers using `handleAction()` and combines them into a single reducer that handles multiple actions. Accepts a map where the keys are the passed as the first parameter to `handleAction()` (the action type), and the values are passed as the second parameter (either a reducer or reducer map).
-
-The optional second parameter specifies a default or initial state, which is used when `undefined` is passed to the reducer.
-
-(Internally, `handleActions()` works by applying multiple reducers in sequence using [reduce-reducers](https://github.com/acdlite/reduce-reducers).)
+A validated identity function will be used. [JSONSchema v4](http://json-schema.org/) validation powered by [is-my-json-valid](https://github.com/mafintosh/is-my-json-valid).
 
 Example:
 
 ```js
-const reducer = handleActions({
-  INCREMENT: (state, action) => ({
-    counter: state.counter + action.payload
-  }),
 
-  DECREMENT: (state, action) => ({
-    counter: state.counter - action.payload
-  })
-}, { counter: 0 });
+let actionCreator = createAction('ACTION', {
+  required: true,
+  type: 'object',
+  properties: {
+    hello: {
+      required: true,
+      type: 'string',
+      description: 'A greeting'
+    }
+  }
+});
+
+expect(actionCreator()).to.deep.equal({
+  type: 'ACTION',
+  error: true,
+  payload: new Error('payload is required')
+});
+
+expect(actionCreator({})).to.deep.equal({
+  type: 'ACTION',
+  error: true,
+  payload: new Error('payload.hello is required')
+});
+
+expect(actionCreator({hello: 123})).to.deep.equal({
+  type: 'ACTION',
+  error: true,
+  payload: new Error('payload.hello is the wrong type')
+});
+
+expect(actionCreator({hello: 'world'})).to.deep.equal({
+  type: 'ACTION',
+  payload: {hello: 'world'}
+});
 ```
 
-## Usage with middleware
+#### – Array (property extraction)
 
-redux-actions is handy all by itself, however, it's real power comes when you combine it with middleware.
+A property extraction function will be used. This is thought to be used as a fast way of document expected properties, without defining a schema (yet).
 
-The identity form of `createAction` is a great way to create a single action creator that handles multiple payload types. For example, using [redux-promise](https://github.com/acdlite/redux-promise) and [redux-rx](https://github.com/acdlite/redux-rx):
+Example:
 
 ```js
-let addTodo = createAction('ADD_TODO');
+let actionCreator = createAction('ACTION', ['prop1', 'prop3']);
 
-// A single reducer...
-handleAction('ADD_TODO', (state = { todos: [] }, action) => ({
-  ...state,
-  todos: [...state.todos, action.payload]
-}));
-
-// ...that works with all of these forms:
-// (Don't forget to use `bindActionCreators()` or equivalent.
-// I've left that bit out)
-addTodo('Use Redux')
-addTodo(Promise.resolve('Weep with joy'));
-addTodo(Observable.of(
-  'Learn about middleware',
-  'Learn about higher-order stores'
-)).subscribe();
+expect(actionCreator({prop1: 1, prop2: 2, prop3: 3})).to.deep.equal({
+  type: 'ACTION',
+  payload: {
+    prop1: 1,
+    prop3: 3
+  }
+});
 ```
 
-## See also
-
-Use redux-actions in combination with FSA-compliant libraries.
-
-- [redux-promise](https://github.com/acdlite/redux-promise) - Promise middleware
-- [redux-rx](https://github.com/acdlite/redux-rx) - Includes observable middleware.
+---
+**NOTE:** The more correct name for `createAction` function probably is `createActionCreator()`, but that seems a bit redundant.
