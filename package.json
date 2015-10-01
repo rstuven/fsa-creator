@@ -1,6 +1,6 @@
 {
   "name": "fsa-creator",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Flux Standard Action creation with validation",
   "main": "lib/index.js",
   "scripts": {
