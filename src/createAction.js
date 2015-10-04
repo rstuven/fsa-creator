@@ -1,7 +1,7 @@
 import validator from 'is-my-json-valid';
 
-function identity(t) {
-  return t;
+function identity(value) {
+  return value;
 }
 
 function isValidator(input) {

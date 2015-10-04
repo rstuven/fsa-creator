@@ -32,7 +32,7 @@ describe('createAction()', () => {
       const action = actionCreator(foobar);
       expect(action).to.deep.equal({
         type,
-        payload: foobar
+        payload: foobar,
       });
     });
 
@@ -42,7 +42,7 @@ describe('createAction()', () => {
       const action = actionCreator(foobar);
       expect(action).to.deep.equal({
         type,
-        payload: {ping: 'pong'}
+        payload: {ping: 'pong'},
       });
     });
 
@@ -52,7 +52,7 @@ describe('createAction()', () => {
       const action = actionCreator(foobar);
       expect(action).to.deep.equal({
         type,
-        payload: foobar
+        payload: foobar,
       });
     });
 
@@ -64,11 +64,11 @@ describe('createAction()', () => {
       expect(action).to.deep.equal({
         type,
         payload: {
-          cid: 1
+          cid: 1,
         },
         meta: {
-          cid: 2
-        }
+          cid: 2,
+        },
       });
     });
 
@@ -80,41 +80,41 @@ describe('createAction()', () => {
           hello: {
             required: true,
             type: 'string',
-            description: 'A greeting'
-          }
-        }
+            description: 'A greeting',
+          },
+        },
       });
       const action1 = actionCreator();
       expect(action1).to.deep.equal({
         type,
         error: true,
-        payload: new Error('payload is required')
+        payload: new Error('payload is required'),
       });
 
       const action2 = actionCreator({});
       expect(action2).to.deep.equal({
         type,
         error: true,
-        payload: new Error('payload.hello is required')
+        payload: new Error('payload.hello is required'),
       });
 
       const action3 = actionCreator({ hello: 123 });
       expect(action3).to.deep.equal({
         type,
         error: true,
-        payload: new Error('payload.hello is the wrong type')
+        payload: new Error('payload.hello is the wrong type'),
       });
 
       const action4 = actionCreator({hello: 'world'});
       expect(action4).to.deep.equal({
         type,
-        payload: { hello: 'world' }
+        payload: { hello: 'world' },
       });
     });
 
     it('validates meta schema', () => {
       const actionCreator = createAction(type, true, {
-        required: true
+        required: true,
       });
 
       const action1 = actionCreator();
