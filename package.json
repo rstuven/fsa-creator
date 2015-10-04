@@ -1,11 +1,11 @@
 {
   "name": "fsa-creator",
-  "version": "0.1.0",
   "description": "Flux Standard Action creation with validation",
   "main": "lib/index.js",
   "scripts": {
     "test": "make test",
-    "prepublish": "make clean build"
+    "prepublish": "make clean build",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [
     "flux",
@@ -31,7 +31,8 @@
     "eslint": "^1.6.0",
     "eslint-config-airbnb": "^0.1.0",
     "lodash.isplainobject": "^3.2.0",
-    "mocha": "^2.3.3"
+    "mocha": "^2.3.3",
+    "semantic-release": "^4.3.5"
   },
   "dependencies": {
     "flux-standard-action": "^0.6.0",
