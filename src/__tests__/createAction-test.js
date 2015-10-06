@@ -125,5 +125,13 @@ describe('createAction()', () => {
       expect(action2.error).to.not.exist;
       expect(action2.meta).to.equal(123);
     });
+
+    it('casts as string', () => {
+      const actionCreator = createAction(type);
+      const obj = {
+        [actionCreator]: null,
+      };
+      expect(obj).to.deep.equal({[type]: null});
+    });
   });
 });

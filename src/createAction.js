@@ -55,6 +55,7 @@ export default function createAction(type, payloadSpec, metaSpec) {
     return action;
   }
 
+  // NOTE: use Symbol.toPrimitive when it's well supported
   actionCreator.toString = () => type;
 
   return actionCreator;
