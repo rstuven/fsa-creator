@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "flux-standard-action": "0.6.0",
-    "is-my-json-valid": "2.12.2"
+    "is-my-json-valid": "2.12.3"
   }
 }
