@@ -42,7 +42,7 @@ describe('createAction()', () => {
       const action = actionCreator(foobar);
       expect(action).to.deep.equal({
         type,
-        payload: {ping: 'pong'},
+        payload: { ping: 'pong' },
       });
     });
 
@@ -105,7 +105,7 @@ describe('createAction()', () => {
         payload: new Error('payload.hello is the wrong type'),
       });
 
-      const action4 = actionCreator({hello: 'world'});
+      const action4 = actionCreator({ hello: 'world' });
       expect(action4).to.deep.equal({
         type,
         payload: { hello: 'world' },
@@ -131,7 +131,7 @@ describe('createAction()', () => {
       const obj = {
         [actionCreator]: null,
       };
-      expect(obj).to.deep.equal({[type]: null});
+      expect(obj).to.deep.equal({ [type]: null });
     });
   });
 });
