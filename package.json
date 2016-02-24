@@ -32,7 +32,7 @@
     "chai": "3.4.1",
     "eslint": "1.10.3",
     "eslint-config-airbnb": "1.0.2",
-    "lodash.isplainobject": "3.2.0",
+    "lodash.isplainobject": "4.0.3",
     "mocha": "2.3.4",
     "semantic-release": "4.3.5"
   },
