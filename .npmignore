@@ -1,1 +1,7 @@
 src
+.babelrc
+.eslintrc
+.npmrc
+.nvmrc
+.travis.yml
+Makefile
