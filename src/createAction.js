@@ -28,13 +28,17 @@ function propertyCreator(spec, name) {
   }
   if (typeof spec === 'object' && spec instanceof Array) {
     return (data) => spec.reduce((res, prop) => {
-      res[prop] = data[prop];
-      return res;
+      return {
+        ...res,
+        [prop]: data[prop],
+      };
     }, {});
   }
   if (isValidator(spec)) {
     return validatedIdentity(spec, name);
   }
+
+  return undefined;
 }
 
 export default function createAction(type, payloadSpec, metaSpec) {

@@ -1,5 +1,5 @@
-import { createAction } from '../';
 import isPlainObject from 'lodash.isplainobject';
+import { createAction } from '../';
 
 describe('createAction()', () => {
   describe('resulting action creator', () => {
